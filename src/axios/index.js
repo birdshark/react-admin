@@ -27,6 +27,8 @@ export const gitOauthInfo = access_token => get({ url: `${config.GIT_USER}access
 
 // easy-mock数据交互
 // 管理员权限获取
-export const admin = () => get({ url: config.MOCK_AUTH_ADMIN });
+export const admin = () => post({ url: config.MOCK_AUTH_ADMIN });
 // 访问权限获取
-export const guest = () => get({ url: config.MOCK_AUTH_VISITOR });
+export const guest = () => post({ url: config.MOCK_AUTH_VISITOR });
+
+export const auth = (params) => post({ url: config.MOCK_AUTH_ADMIN, data: params, headers:{'Content-Type': 'application/x-www-form-urlencoded'} });

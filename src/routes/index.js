@@ -9,18 +9,23 @@ import queryString from 'query-string';
 
 export default class CRouter extends Component {
     requireAuth = (permission, component) => {
-        const { auth } = this.props;
-        const { permissions } = auth.data;
+        // const { auth } = this.props;
+        // const { permissions } = auth.data;
+        const user = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')):{permissions:false}
+        const { permissions } = user;
         // const { auth } = store.getState().httpData;
         if (!permissions || !permissions.includes(permission)) return <Redirect to={'404'} />;
         return component;
     };
     requireLogin = (component, permission) => {
-        const { auth } = this.props;
-        const { permissions } = auth.data;
+        // const { auth } = this.props;
+        // const { permissions } = auth.data;
+        const user = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')):{permissions:false}
+        const { permissions } = user;
         if (process.env.NODE_ENV === 'production' && !permissions) { // 线上环境判断是否登录
             return <Redirect to={'/login'} />;
         }
+        console.log(permission);
         return permission ? this.requireAuth(permission, component) : component;
     };
     render() {
