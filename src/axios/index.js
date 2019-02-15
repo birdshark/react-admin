@@ -31,4 +31,4 @@ export const admin = () => post({ url: config.MOCK_AUTH_ADMIN });
 // 访问权限获取
 export const guest = () => post({ url: config.MOCK_AUTH_VISITOR });
 
-export const auth = (params) => post({ url: config.MOCK_AUTH_ADMIN, data: params, headers:{'Content-Type': 'application/x-www-form-urlencoded'} });
+export const auth = (params) => post({ url: config.MOCK_AUTH_ADMIN, data: params });
