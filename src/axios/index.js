@@ -6,7 +6,6 @@ import { get, post } from './tools';
 import * as config from './config';
 
 export const getBbcNews = () => get({ url: config.NEWS_BBC });
-
 export const npmDependencies = () => axios.get('./npm.json').then(res => res.data).catch(err => console.log(err));
 
 export const weibo = () => axios.get('./weibo.json').then(res => res.data).catch(err => console.log(err));
@@ -31,4 +30,15 @@ export const admin = () => post({ url: config.MOCK_AUTH_ADMIN });
 // 访问权限获取
 export const guest = () => post({ url: config.MOCK_AUTH_VISITOR });
 
+/**
+ * 权限验证
+ * @param {*} params 参数
+ */
 export const auth = (params) => post({ url: config.MOCK_AUTH_ADMIN, data: params });
+
+/**
+ * 获取管理员列表
+ * @param {*} page 偏移量
+ * @param {*} pageSize 
+ */
+export const getAdminList = (page,pageSize) => post({url : config.ADMIN_LIST, data: {current: page, limit: pageSize}})

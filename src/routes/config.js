@@ -30,6 +30,7 @@ export default {
                 { key: '/app/table/basicTable', title: '基础表格', component: 'BasicTable'},
                 { key: '/app/table/advancedTable', title: '高级表格', component: 'AdvancedTable'},
                 { key: '/app/table/asynchronousTable', title: '异步表格', component: 'AsynchronousTable'},
+                { key: '/app/table/adminList', title: '管理员列表', component: 'AsynchronousAdminList'},
             ],
         },
         {

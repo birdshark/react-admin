@@ -51,7 +51,7 @@ class Login extends React.Component {
                     <Form onSubmit={this.handleSubmit} style={{maxWidth: '300px'}}>
                         <FormItem>
                             {getFieldDecorator('email', {
-                                rules: [{ required: true, message: '请输入用户名!' }],
+                                rules: [{ required: true, message: '请输入用户邮箱!' }],
                             })(
                                 <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} type="mail" placeholder="邮箱" />
                             )}
