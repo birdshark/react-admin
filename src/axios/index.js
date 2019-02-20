@@ -42,3 +42,9 @@ export const auth = (params) => post({ url: config.MOCK_AUTH_ADMIN, data: params
  * @param {*} pageSize 
  */
 export const getAdminList = (page,pageSize) => post({url : config.ADMIN_LIST, data: {current: page, limit: pageSize}})
+
+/**
+ * 保存管理员信息
+ * @param {*} data 
+ */
+export const saveAdmin = (data) => post({url: config.ADMIN_SAVE, data: data});

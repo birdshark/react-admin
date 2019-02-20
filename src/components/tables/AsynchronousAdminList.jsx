@@ -2,20 +2,61 @@
  * Created by hao.cheng on 2017/4/16.
  */
 import React from 'react';
-import { Table, Button, Row, Col, Card, Modal, Form, Input, Radio } from 'antd';
-import { getAdminList } from '../../axios';
+import { Table, Button, Row, Col, Card, Modal, Form, Input } from 'antd';
+import { getAdminList, saveAdmin } from '../../axios';
 import BreadcrumbCustom from '../BreadcrumbCustom';
+
+
+
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 5 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 12 },
+  },
+};
 
 const CollectionCreateForm = Form.create({ 
   name: 'form_in_modal',
-  onFieldsChange: () => {},
-  mapPropsToFields: () => {}
+  onFieldsChange: (props, changedFields) => {
+    props.onChange(changedFields);
+  },
+  mapPropsToFields: (props) => {
+    return {
+      name: Form.createFormField({
+        ...props.formData.name,
+        value: props.formData.name,
+      }),
+      email: Form.createFormField({
+        ...props.formData.email,
+        value: props.formData.email,
+      }),
+      id: Form.createFormField({
+        ...props.formData.id,
+        value: props.formData.id,
+      }),
+      nick: Form.createFormField({
+        ...props.formData.nick,
+        value: props.formData.nick,
+      }),
+      password: Form.createFormField({
+        ...props.formData.password,
+        value: '',
+      })
+    }
+  },
+  onValuesChange(_, values) {
+    console.log(values);
+  }
  })(
   // eslint-disable-next-line
   class extends React.Component {
     render() {
       const {
-        visible, onCancel, onCreate, form, formData
+        visible, onCancel, onCreate, onChange, formData, form
       } = this.props;
       const { getFieldDecorator } = form;
       return (
@@ -25,29 +66,45 @@ const CollectionCreateForm = Form.create({
           okText="Create"
           onCancel={onCancel}
           onOk={onCreate}
+          onChange={onChange}
           formData={formData}
         >
           <Form layout="vertical">
-            <Form.Item label="Name">
+            <Form.Item label="姓名" {...formItemLayout}>
               {getFieldDecorator('name', {
-                rules: [{ required: true, message: 'Please input the title of collection!' }],
+                rules: [{ required: true, message: 'Please input the Name of Admin!' }],
               })(
                 <Input />
               )}
             </Form.Item>
-            <Form.Item label="Email">
+
+            <Form.Item label="邮箱" {...formItemLayout}>
               {getFieldDecorator('email',{
-                rules: [{ required: true, message: 'Please input the email of collection!' }],
+                rules: [{ type: 'email', required: true, message: 'Please input the Email of Admin!' }],
               })(<Input type="email" />)}
             </Form.Item>
+
+            <Form.Item label="昵称" {...formItemLayout}>
+              {getFieldDecorator('nick',{
+                rules: [{ required: true, message: 'Please input the Nick of Admin!' }],
+              })(<Input />)}
+            </Form.Item>
+
+            <Form.Item label="密码" {...formItemLayout}>
+              {getFieldDecorator('password',{
+                rules: [{ required: true, message: 'Please input the Password of Admin!' }],
+              })(<Input type="password" />)}
+            </Form.Item>
+
+            {getFieldDecorator('id')(<Input type="hidden" />)}
           </Form>
         </Modal>
       );
     }
   }
-);
+)
 
-
+const initAdminModel = {name:'',email:'', id: '', password: ''}
 
 class AsynchronousAdminList extends React.Component {
   constructor(props) {
@@ -64,6 +121,11 @@ class AsynchronousAdminList extends React.Component {
     }, {
       title: '姓名',
       dataIndex: 'name',
+      width: 80,
+      align: 'center'
+    }, {
+      title: '昵称',
+      dataIndex: 'nick',
       width: 80,
       align: 'center'
     }, {
@@ -86,17 +148,18 @@ class AsynchronousAdminList extends React.Component {
   }
 
   state = {
-    position: 'both',
+    position: 'bottom',
     selectedRowKeys: [], // Check here to configure the default column
     loading: false,
     data: [],
     editing: false,
     pageSizeOptions: ['10', '20', '30', '40'],
     total: 2,
-    pageSize: 1,
+    pageSize: 10,
     current: 1,
     onChange: (page, pageSize) => {this.start(page, pageSize)},
-    editingData:{},
+    editingData: initAdminModel,
+    editingType: 'add',
   };
   componentDidMount() {
     this.start();
@@ -121,8 +184,7 @@ class AsynchronousAdminList extends React.Component {
    * 编辑
    */
   edit = (text, record) => {
-    console.log(text,record);
-    this.setState({ editing: true, editingData:record});
+    this.setState({ editing: true, editingData:record, editingType: 'edit'});
   }
 
   /**
@@ -140,17 +202,32 @@ class AsynchronousAdminList extends React.Component {
     this.setState({ editing: false });
   }
 
-  handleCreate = () => {
+  handleSave = () => {
     const form = this.formRef.props.form;
     form.validateFields((err, values) => {
       if (err) {
         return;
       }
-
+      if(this.state.editingType === 'add') {
+        console.log('add action')
+      }
+      if(this.state.editingType === 'edit'){
+        saveAdmin(values).then(({status,message}) => {
+           if(status === 'ok'){
+             this.start(this.state.current, this.state.pageSize)
+           }
+        })
+      }
       console.log('Received values of form: ', values);
       form.resetFields();
       this.setState({ editing: false });
     });
+  }
+  handleChange = (changedFields) => {
+    // console.log(changedFields)
+  }
+  add = () => {
+    this.setState({ editing: true,editingData: initAdminModel});
   }
   render() {
     const { loading, selectedRowKeys } = this.state;
@@ -170,6 +247,9 @@ class AsynchronousAdminList extends React.Component {
                   <Button type="primary" onClick={() => this.start(this.state.current, this.state.pageSize)}
                     disabled={loading} loading={loading}
                   >Reload</Button>
+                  <Button type="primary" onClick={() => this.add()}
+                    disabled={loading} loading={loading}
+                  >Add</Button>
                   <span style={{ marginLeft: 8 }}>{hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}</span>
                 </div>
                 <Table bordered pagination={this.state} size="small" rowKey="id" rowSelection={rowSelection} columns={this.columns} dataSource={this.state.data} />
@@ -181,8 +261,9 @@ class AsynchronousAdminList extends React.Component {
         wrappedComponentRef={this.saveFormRef}
         visible={this.state.editing}
         onCancel={this.handleCancel}
-        onCreate={this.handleCreate}
-        formData={this.state.formData}
+        onCreate={this.handleSave}
+        onChange={this.handleChange}
+        formData={this.state.editingData}
         />
       </div>
     );
