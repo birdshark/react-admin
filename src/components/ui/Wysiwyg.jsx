@@ -30,11 +30,8 @@ class Wysiwyg extends Component {
         });
     };
 
-    onContentStateChange = (contentState) => {
-        console.log('contentState', contentState);
-    };
-
     onEditorStateChange = (editorState) => {
+        console.log( editorState)
         this.setState({
             editorState,
         });

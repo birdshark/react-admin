@@ -48,3 +48,26 @@ export const getAdminList = (page,pageSize) => post({url : config.ADMIN_LIST, da
  * @param {*} data 
  */
 export const saveAdmin = (data) => post({url: config.ADMIN_SAVE, data: data});
+
+/**
+ * 获取文章列表
+ * @param {*} page 
+ * @param {*} pageSize 
+ */
+export const getArticleList = (page, pageSize) => post({url : config.ARTICLE_LIST, data: {current: page, limit: pageSize}})
+
+/**
+ * 保存文章信息
+ * @param {*} data 
+ */
+export const saveArticle = (data) => post({url : config.ARTICLE_SAVE, data: data})
+
+/**
+ * 获取所有标签
+ */
+export const getAllLabels = () => post({url: config.LABEL_LIST})
+
+/**
+ * 获取所有类别
+ */
+export const getAllTypes = () => post({url: config.TYPE_LIST})

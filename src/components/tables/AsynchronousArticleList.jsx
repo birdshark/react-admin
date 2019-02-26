@@ -2,64 +2,95 @@
  * Created by hao.cheng on 2017/4/16.
  */
 import React from 'react';
-import { Table, Button, Row, Col, Card, Modal, Form, Input } from 'antd';
-import { getAdminList, saveAdmin } from '../../axios';
+import { Table, Button, Row, Col, Card, Modal, Form, Input, Select } from 'antd';
+import { getArticleList, saveArticle, getAllLabels, getAllTypes } from '../../axios';
 import BreadcrumbCustom from '../BreadcrumbCustom';
-
+import ReactQuill from 'react-quill'; // ES6
+import 'react-quill/dist/quill.snow.css'; 
 
 
 const formItemLayout = {
   labelCol: {
-    xs: { span: 24 },
-    sm: { span: 5 },
+    xs: { span: 2 },
+    sm: { span: 2 },
   },
   wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 12 },
+    xs: { span: 2 },
+    sm: { span: 16 },
   },
 };
 
+
+
+const modules = {
+  toolbar: [
+    ['bold', 'italic', 'underline','strike', 'blockquote'],
+    [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+    ['link', 'image'],
+    ['clean']
+  ],
+}
+
+const formats = [
+  'bold', 'italic', 'underline', 'strike', 'blockquote',
+  'list', 'bullet', 'indent',
+  'link', 'image'
+]
+
+const Option = Select.Option
 const CollectionCreateForm = Form.create({ 
   name: 'form_in_modal',
   onFieldsChange: (props, changedFields) => {
     props.onChange(changedFields);
   },
   mapPropsToFields: (props) => {
+    console.log(props.editorState);
     return {
-      name: Form.createFormField({
-        ...props.formData.name,
-        value: props.formData.name,
+      title: Form.createFormField({
+        ...props.formData.title,
+        value: props.formData.title,
       }),
-      email: Form.createFormField({
-        ...props.formData.email,
-        value: props.formData.email,
+      article_label: Form.createFormField({
+        ...props.formData.article_label,
+        value: props.formData.article_label === "" ?[]:(props.formData.article_label).split(",")
+      }),
+      description: Form.createFormField({
+        ...props.formData.description,
+        value: props.formData.description,
+      }),
+      article_type: Form.createFormField({
+        ...props.formData.article_type,
+        value: props.formData.article_type,
       }),
       id: Form.createFormField({
         ...props.formData.id,
         value: props.formData.id,
       }),
-      nick: Form.createFormField({
-        ...props.formData.nick,
-        value: props.formData.nick,
-      }),
-      password: Form.createFormField({
-        ...props.formData.password,
-        value: '',
+      content: Form.createFormField({
+        ...props.formData.content,
+        value: props.formData.content
       })
     }
   },
   onValuesChange(_, values) {
-    console.log(values);
+    // console.log(values);
   }
  })(
   // eslint-disable-next-line
   class extends React.Component {
     render() {
       const {
-        visible, onCancel, onCreate, onChange, formData, editingType, form
+        visible, onCancel, onCreate, onChange, formData, formLabels, formTypes, editingType, form
       } = this.props;
+
+      const title = editingType === 'add'? '新增':'修改';
+      const labelOptions = formLabels.map(d => <Option key={d.label_name}>{d.label_name}</Option>);
+      // const typeOptions = formTypes.map(d => <Option key={d.type_id}>{d.type_name}</Option>);
+      const typeOptions = [];
+      for(let i in formTypes){
+        typeOptions.push(<Option key={i}>{formTypes[i]}</Option>)
+      }
       const { getFieldDecorator } = form;
-      const title = editingType === 'add'? '新增' : '修改';
       return (
         <Modal
           visible={visible}
@@ -70,34 +101,44 @@ const CollectionCreateForm = Form.create({
           onOk={onCreate}
           onChange={onChange}
           formData={formData}
+          formLabels={formLabels}
+          formTypes={formTypes}
+          editingType={editingType}
+          width={880}
         >
           <Form layout="vertical">
-            <Form.Item label="姓名" {...formItemLayout}>
-              {getFieldDecorator('name', {
+            <Form.Item label="标题" {...formItemLayout}>
+              {getFieldDecorator('title', {
                 rules: [{ required: true, message: 'Please input the Name of Admin!' }],
               })(
                 <Input />
               )}
             </Form.Item>
 
-            <Form.Item label="邮箱" {...formItemLayout}>
-              {getFieldDecorator('email',{
-                rules: [{ type: 'email', required: true, message: 'Please input the Email of Admin!' }],
-              })(<Input type="email" />)}
+            <Form.Item label="标签" {...formItemLayout}>
+              {getFieldDecorator('article_label',{
+                rules: [{ required: true, message: 'Please input the Email of Admin!' }],
+              })(<Select mode="tags" placeholder="Please select favourite colors" tokenSeparators={[',']}>{labelOptions}</Select>)}
             </Form.Item>
 
-            <Form.Item label="昵称" {...formItemLayout}>
-              {getFieldDecorator('nick',{
+            <Form.Item label="类别" {...formItemLayout}>
+              {getFieldDecorator('article_type',{
                 rules: [{ required: true, message: 'Please input the Nick of Admin!' }],
-              })(<Input />)}
+              })(<Select placeholder="文章类别">{typeOptions}</Select>)}
             </Form.Item>
 
-            <Form.Item label="密码" {...formItemLayout}>
-              {getFieldDecorator('password',{
+            <Form.Item label="描述" {...formItemLayout}>
+              {getFieldDecorator('description',{
                 rules: [{ required: true, message: 'Please input the Password of Admin!' }],
-              })(<Input type="password" />)}
+              })(<Input.TextArea rows={4} />)}
             </Form.Item>
-
+            
+            <Form.Item label="内容" {...formItemLayout}>
+              {getFieldDecorator('content',{
+                rules: [{ message: 'Please input the Password of Admin!' }],
+              })(<ReactQuill modules={modules} formats={formats} style={{minHeight: '100px !important',maxHeight: '300px',overflow: 'hidden',overflowY: 'scroll',overflowX: 'scroll'}} />)}
+            </Form.Item>
+            
             {getFieldDecorator('id')(<Input type="hidden" />)}
           </Form>
         </Modal>
@@ -106,9 +147,9 @@ const CollectionCreateForm = Form.create({
   }
 )
 
-const initAdminModel = {name:'',email:'', id: '', password: ''}
+const initAdminModel = {title:'',article_label:'', description: '', article_type: [], content: ''}
 
-class AsynchronousAdminList extends React.Component {
+class AsynchronousArticleList extends React.Component {
   constructor(props) {
     super(props);
     /**
@@ -121,29 +162,30 @@ class AsynchronousAdminList extends React.Component {
       // render: (text, record) => <a href={record.url} target="_blank" rel="noopener noreferrer">{text}</a>,
       align: 'center'
     }, {
-      title: '姓名',
-      dataIndex: 'name',
+      title: '标题',
+      dataIndex: 'title',
+      width: 120,
+      align: 'center'
+    }, {
+      title: '标签',
+      dataIndex: 'article_label',
       width: 80,
       align: 'center'
     }, {
-      title: '昵称',
-      dataIndex: 'nick',
+      title: '描述',
+      dataIndex: 'description',
       width: 80,
       align: 'center'
     }, {
-      title: '邮箱',
-      dataIndex: 'email',
-      width: 80,
-      align: 'center'
-    }, {
-      title: '头像',
-      dataIndex: 'avatar',
-      width: 200,
-      align: 'center'
+      title: '类别',
+      dataIndex: 'article_type',
+      width: 50,
+      align: 'center',
+      render: (text, record) => this.state.types[text],
     }, {
       title: '操作',
       dataIndex: 'Operation',
-      width: 80,
+      width: 50,
       align: 'center',
       render: (text, record) => <Button type="primary" icon="edit" size="small" onClick={() => this.edit(text, record)} />,
     }]
@@ -162,8 +204,16 @@ class AsynchronousAdminList extends React.Component {
     onChange: (page, pageSize) => {this.start(page, pageSize)},
     editingData: initAdminModel,
     editingType: 'add',
+    labels:[],
+    types:[]
   };
   componentDidMount() {
+    getAllLabels().then(({data})=>{
+      this.setState({labels : data})
+    })
+    getAllTypes().then(({data})=>{
+      this.setState({types : data})
+    })
     this.start();
   }
 
@@ -173,7 +223,7 @@ class AsynchronousAdminList extends React.Component {
   start = (page,pageSize) => {
     page = page || this.state.current
     pageSize = pageSize || this.state.pageSize
-    getAdminList(page,pageSize).then(({ admins, total, current}) => {
+    getArticleList(page,pageSize).then(({ admins, total, current}) => {
       this.setState({
         data: admins,
         loading: false,
@@ -200,21 +250,29 @@ class AsynchronousAdminList extends React.Component {
     this.formRef = formRef
   }
 
+  /**
+   * 取消编辑
+   */
   handleCancel = () => {
     this.setState({ editing: false });
   }
 
+  /**
+   * 保存
+   */
   handleSave = () => {
     const form = this.formRef.props.form;
     form.validateFields((err, values) => {
+      console.log(values);
       if (err) {
         return;
       }
       if(this.state.editingType === 'add') {
-        console.log('add action')
       }
       if(this.state.editingType === 'edit'){
-        saveAdmin(values).then(({status,message}) => {
+        let data = {...values}
+        data.article_label = (values.article_label).join(",")||''
+        saveArticle(data).then(({status,message}) => {
            if(status === 'ok'){
              this.start(this.state.current, this.state.pageSize)
            }
@@ -225,11 +283,15 @@ class AsynchronousAdminList extends React.Component {
       this.setState({ editing: false });
     });
   }
+
+  /**
+   *  编辑监听
+   */
   handleChange = (changedFields) => {
-    // console.log(changedFields)
+    console.log(changedFields);
   }
   add = () => {
-    this.setState({ editing: true,editingData: initAdminModel});
+    this.setState({ editing: true,editingData: initAdminModel, editingType: 'add'});
   }
   render() {
     const { loading, selectedRowKeys } = this.state;
@@ -244,7 +306,7 @@ class AsynchronousAdminList extends React.Component {
         <Row gutter={16}>
           <Col className="gutter-row" md={24}>
             <div className="gutter-box">
-              <Card title="管理员列表" bordered={false}>
+              <Card title="文章列表" bordered={false}>
                 <div style={{ marginBottom: 16 }}>
                   <Button type="primary" onClick={() => this.start(this.state.current, this.state.pageSize)}
                     disabled={loading} loading={loading}
@@ -254,7 +316,7 @@ class AsynchronousAdminList extends React.Component {
                   >Add</Button>
                   <span style={{ marginLeft: 8 }}>{hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}</span>
                 </div>
-                <Table bordered pagination={this.state} size="small" rowKey="id" rowSelection={rowSelection} columns={this.columns} dataSource={this.state.data} />
+                <Table bordered expandedRowRender={(record) => <p>{record.content}</p>} pagination={this.state} size="small" rowKey="id" rowSelection={rowSelection} columns={this.columns} dataSource={this.state.data} />
               </Card>
             </div>
           </Col>
@@ -266,6 +328,8 @@ class AsynchronousAdminList extends React.Component {
         onCreate={this.handleSave}
         onChange={this.handleChange}
         formData={this.state.editingData}
+        formLabels={this.state.labels}
+        formTypes={this.state.types}
         editingType={this.state.editingType}
         />
       </div>
@@ -273,4 +337,4 @@ class AsynchronousAdminList extends React.Component {
   }
 }
 
-export default AsynchronousAdminList;
+export default AsynchronousArticleList;

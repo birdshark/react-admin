@@ -70,6 +70,7 @@ class SiderCustom extends Component {
             <Sider
                 trigger={null}
                 breakpoint="lg"
+                collapsible
                 collapsed={this.props.collapsed}
                 style={{ overflowY: 'auto' }}
             >

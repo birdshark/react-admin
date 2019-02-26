@@ -12,8 +12,16 @@
 const HOSTS = 'http://test.multi-phalcon.com';
 export const MOCK_AUTH_ADMIN = HOSTS + '/api/auth/start';
 export const MOCK_AUTH_VISITOR = HOSTS + '/api/auth/start';
+
 export const ADMIN_LIST = HOSTS + '/api/admin/list';
 export const ADMIN_SAVE = HOSTS + '/api/admin/save';
+
+export const ARTICLE_LIST = HOSTS + '/api/article/list';
+export const ARTICLE_SAVE = HOSTS + '/api/article/save';
+
+export const LABEL_LIST = HOSTS + '/api/label/all' ;
+
+export const TYPE_LIST = HOSTS + '/api/type/all';
 // github授权
 export const GIT_OAUTH = 'https://github.com/login/oauth';
 // github用户
