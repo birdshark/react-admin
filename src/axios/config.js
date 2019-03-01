@@ -22,6 +22,8 @@ export const ARTICLE_SAVE = HOSTS + '/api/article/save';
 export const LABEL_LIST = HOSTS + '/api/label/all' ;
 
 export const TYPE_LIST = HOSTS + '/api/type/all';
+
+export const GALLERY_LIST = HOSTS + '/api/gallery/list';
 // github授权
 export const GIT_OAUTH = 'https://github.com/login/oauth';
 // github用户

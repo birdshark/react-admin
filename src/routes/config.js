@@ -1,9 +1,9 @@
 export default {
     menus: [ // 菜单相关路由
         { key: '/app/dashboard/index', title: '首页', icon: 'mobile', component: 'Dashboard' },
-        // {
-        //     key: '/app/ui', title: 'UI', icon: 'scan',
-        //     subs: [
+        {
+            key: '/app/ui', title: 'UI', icon: 'scan',
+            subs: [
         //         { key: '/app/ui/buttons', title: '按钮', component: 'Buttons'},
         //         { key: '/app/ui/icons', title: '图标', component: 'Icons'},
         //         { key: '/app/ui/spins', title: '加载中', component: 'Spins'},
@@ -13,16 +13,16 @@ export default {
         //         { key: '/app/ui/banners', title: '轮播图', component: 'Banners'},
         //         { key: '/app/ui/wysiwyg', title: '富文本', component: 'WysiwygBundle'},
         //         { key: '/app/ui/drags', title: '拖拽', component: 'Drags'},
-        //         { key: '/app/ui/gallery', title: '画廊', component: 'Gallery'},
+                { key: '/app/ui/gallery', title: '画廊', component: 'Gallery'},
         //         { key: '/app/ui/map', title: '地图', component: 'MapUi'},
-        //     ],
-        // },
+            ],
+        },
         // {
         //     key: '/app/animation', title: '动画', icon: 'rocket',
         //     subs: [
         //         { key: '/app/animation/basicAnimations', title: '基础动画', component: 'BasicAnimations'},
         //         { key: '/app/animation/exampleAnimations', title: '动画案例', component: 'ExampleAnimations'},
-        //     ],
+            // ],
         // },
         {
             key: '/app/table', title: '表格', icon: 'copy',

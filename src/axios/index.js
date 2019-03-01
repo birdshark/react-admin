@@ -71,3 +71,5 @@ export const getAllLabels = () => post({url: config.LABEL_LIST})
  * 获取所有类别
  */
 export const getAllTypes = () => post({url: config.TYPE_LIST})
+
+export const getGalleryList = () => post({ url: config.GALLERY_LIST })

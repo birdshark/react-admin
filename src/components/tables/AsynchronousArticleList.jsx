@@ -20,7 +20,7 @@ const formItemLayout = {
   },
 };
 
-
+const reactQuillStyle = {minHeight: '100px !important',maxHeight: '300px',overflow: 'hidden',overflowY: 'scroll',overflowX: 'scroll'}
 
 const modules = {
   toolbar: [
@@ -104,7 +104,8 @@ const CollectionCreateForm = Form.create({
           formLabels={formLabels}
           formTypes={formTypes}
           editingType={editingType}
-          width={880}
+          bodyStyle={{textAlign:"center"}}
+          width={800}
         >
           <Form layout="vertical">
             <Form.Item label="标题" {...formItemLayout}>
@@ -136,7 +137,7 @@ const CollectionCreateForm = Form.create({
             <Form.Item label="内容" {...formItemLayout}>
               {getFieldDecorator('content',{
                 rules: [{ message: 'Please input the Password of Admin!' }],
-              })(<ReactQuill modules={modules} formats={formats} style={{minHeight: '100px !important',maxHeight: '300px',overflow: 'hidden',overflowY: 'scroll',overflowX: 'scroll'}} />)}
+              })(<ReactQuill modules={modules} formats={formats} style={reactQuillStyle} />)}
             </Form.Item>
             
             {getFieldDecorator('id')(<Input type="hidden" />)}
