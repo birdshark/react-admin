@@ -104,7 +104,7 @@ const CollectionCreateForm = Form.create({
           formLabels={formLabels}
           formTypes={formTypes}
           editingType={editingType}
-          bodyStyle={{textAlign:"center"}}
+          bodyStyle={{}}
           width={800}
         >
           <Form layout="vertical">

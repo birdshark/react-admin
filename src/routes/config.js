@@ -13,7 +13,7 @@ export default {
         //         { key: '/app/ui/banners', title: '轮播图', component: 'Banners'},
         //         { key: '/app/ui/wysiwyg', title: '富文本', component: 'WysiwygBundle'},
         //         { key: '/app/ui/drags', title: '拖拽', component: 'Drags'},
-                { key: '/app/ui/gallery', title: '画廊', component: 'Gallery'},
+                { key: '/app/ui/galleries', title: '画廊', component: 'Galleries'},
         //         { key: '/app/ui/map', title: '地图', component: 'MapUi'},
             ],
         },

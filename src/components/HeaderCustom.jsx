@@ -63,7 +63,7 @@ class HeaderCustom extends Component {
     render() {
         const { responsive, path } = this.props;
         return (
-            <Header className="custom-theme header" >
+            <Header className="custom-theme header" id="navi">
                 {
                     responsive.data.isMobile ? (
                         <Popover content={<SiderCustom path={path} popoverHide={this.popoverHide} />} trigger="click" placement="bottomLeft" visible={this.state.visible} onVisibleChange={this.handleVisibleChange}>

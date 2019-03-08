@@ -21,7 +21,7 @@ import Tabs from './ui/Tabs';
 import Banners from './ui/banners';
 import Drags from './ui/Draggable';
 import Dashboard from './dashboard/Dashboard';
-import Gallery from './ui/Gallery';
+import Galleries from './ui/Galleries';
 import BasicAnimations from './animation/BasicAnimations';
 import ExampleAnimations from './animation/ExampleAnimations';
 import AuthBasic from './auth/Basic';
@@ -38,7 +38,7 @@ const WysiwygBundle = Loadable({ // 按需加载富文本配置
 export default {
     BasicForm, BasicTable, AdvancedTable, AsynchronousTable,AsynchronousAdminList,AsynchronousArticleList, 
     Echarts, Recharts, Icons, Buttons, Spins, Modals, Notifications,
-    Tabs, Banners, Drags, Dashboard, Gallery, BasicAnimations,
+    Tabs, Banners, Drags, Dashboard, Galleries, BasicAnimations,
     ExampleAnimations, AuthBasic, RouterEnter, WysiwygBundle,
     Cssmodule, MapUi, QueryParams
 }

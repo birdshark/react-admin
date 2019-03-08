@@ -5,6 +5,9 @@
 import axios from 'axios';
 import { message } from 'antd';
 
+
+export const user = JSON.parse(localStorage.getItem('user'))||'';
+
 /**
  * 公用get请求
  * @param url       接口地址
@@ -25,7 +28,7 @@ export const get = ({url, msg = '接口异常', headers}) =>
  * @param headers   接口所需header配置
  */
 export const post = ({url, data, msg = '接口异常', headers}) =>
-    axios.post(url, data, headers).then(res => res.data).catch(err => {
+    axios.post(url, {...data,token: user.token}, headers).then(res => res.data).catch(err => {
         console.log(err);
         message.warn(msg);
     });

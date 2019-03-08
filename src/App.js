@@ -72,8 +72,8 @@ class App extends Component {
             <DocumentTitle title={title}>
                 <Layout>
                     {!responsive.data.isMobile && <SiderCustom collapsed={this.state.collapsed} />}
-                    <ThemePicker />
-                    <Layout style={{flexDirection: 'column'}}>
+                    {/* <ThemePicker /> */}
+                    <Layout style={{flexDirection: 'column'}} id="right">
                         <HeaderCustom toggle={this.toggle} collapsed={this.state.collapsed} user={auth.data || {}} />
                         <Content style={{ margin: '0 16px', overflow: 'initial', flex: '1 1 0' }}>
                             <Routes auth={auth} onRouterChange={this._setTitle} />
