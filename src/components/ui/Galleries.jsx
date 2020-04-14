@@ -1,14 +1,12 @@
 /**
  * Created by hao.cheng on 2017/5/6.
  */
-import React from 'react';
-import { Spin } from 'antd';
-import BreadcrumbCustom from '../BreadcrumbCustom';
-import { getGalleryList } from '../../axios';
+import React from 'react'
+import { Spin } from 'antd'
+import BreadcrumbCustom from '../BreadcrumbCustom'
+import { getGalleryList } from '../../axios'
 import Gallery from 'react-photo-gallery'
-
-
-
+import Lightbox from 'react-images'
 
 const example = {
     textAlign: 'center',
@@ -18,8 +16,6 @@ const example = {
     padding: '30px 50px',
     margin: '20px 0'
 }
-
-
 
 export const debounce = (func, wait, immediate) => {
     let timeout;
@@ -38,7 +34,6 @@ export const debounce = (func, wait, immediate) => {
     };
 }
 
-
 class Galleries extends React.Component {
     constructor(props){
         super(props)
@@ -52,7 +47,9 @@ class Galleries extends React.Component {
         loadedAll: false,
         loading: false,
         totalPages: 10,
-        hasMore: this.pageNum!==this.totalPages
+        pageSize: 20,
+        hasMore: this.pageNum!==this.totalPages,
+        currentImage : 0,
     }
     
     componentDidMount() {
@@ -71,19 +68,53 @@ class Galleries extends React.Component {
                 v.height = parseInt(v.height)
             })
             
-            this.setState({ gallery : data.slice(0,6),images: data,totalPages: Math.ceil(data.length/6),loading: false})
+            this.setState({ gallery : data.slice(0,this.state.pageSize),images: data,totalPages: Math.ceil(data.length/this.state.pageSize),loading: false})
         })
     }
 
+    openLightbox = (event, obj) => {
+        this.setState({
+            currentImage: obj.index,
+            lightboxIsOpen: true,
+        });
+    }
+
+    closeLightbox = () => {
+        this.setState({
+          currentImage: 0,
+          lightboxIsOpen: false,
+        });
+    }
+
+    gotoPrevious = () => {
+        this.setState({
+          currentImage: this.state.currentImage - 1,
+        });
+    }
+
+    gotoNext = () => {
+        this.setState({
+          currentImage: this.state.currentImage + 1,
+        });
+    }
+
     handleScroll = () => {
+        console.log(this.props)
         let that = this
         let right = document.querySelector('#right'),gallery = document.querySelector("#gallery"),navi = document.querySelector('#navi')
         let scrollY = window.scrollY || window.pageYOffset || right.scrollTop;
-        console.log(scrollY+window.innerHeight ,gallery.parentNode.clientHeight - 50);
+        //防止在loading过程中切换component 导致元素消失
+        if(gallery === null){
+            if(this.timer){
+                clearTimeout(this.timer);
+            }
+            return;
+        }
         if ((scrollY+window.innerHeight) >= (gallery.parentNode.clientHeight - 50) && this.state.pageNum!==this.state.totalPages && !this.state.loading) {
             if(this.timer){
                 clearTimeout(this.timer);
             }
+            this.setState({loading: true})
             this.timer = setTimeout(()=>that.loadMorePhotos(),1000);
         }
     }
@@ -94,7 +125,7 @@ class Galleries extends React.Component {
             return;
         }
         this.setState({
-            gallery: this.state.gallery.concat(this.state.images.slice(this.state.gallery.length,this.state.gallery.length+6)), 
+            gallery: this.state.gallery.concat(this.state.images.slice(this.state.gallery.length,this.state.gallery.length+this.state.pageSize)), 
             pageNum: this.state.pageNum + 1,
             loading: false
         });
@@ -104,18 +135,15 @@ class Galleries extends React.Component {
         return (
             <div className="gutter-example button-demo" id="gallery">
                 <BreadcrumbCustom first="UI" second="xxxx" />
-                
-                {/* <InfiniteScroll
-                    pageStart={0}
-                    loadMore={this.loadMorePhotos}
-                    hasMore={this.state.totalPages!==this.state.pageNum && !this.state.loading}
-                    useWindow={false}
-                >
-                    <Gallery photos={this.state.gallery} />
-                    {this.state.loading && this.state.hasMore && (<div className="demo-loading-container"><Spin /></div>)}
-                </InfiniteScroll> */}
-                <Gallery photos={this.state.gallery} />
-                {<div style={example}><Spin /></div>}
+                <Gallery photos={this.state.gallery} onClick={this.openLightbox} />
+                <Lightbox images={this.state.gallery}
+                onClose={this.closeLightbox}
+                onClickPrev={this.gotoPrevious}
+                onClickNext={this.gotoNext}
+                currentImage={this.state.currentImage}
+                isOpen={this.state.lightboxIsOpen}
+                />
+                {this.state.loading && <div style={example}><Spin /></div>}
             </div>
         )
     }
